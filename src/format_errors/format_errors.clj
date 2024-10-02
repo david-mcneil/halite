@@ -4,7 +4,7 @@
 (ns format-errors.format-errors
   (:require [clojure.pprint :as pprint]
             [clojure.string :as string]
-            [schema.core :as s]
+            [malli.core :as malli]
             [taoensso.timbre :as log])
   (:import [clojure.lang Namespace]
            [java.io Writer]
@@ -62,12 +62,14 @@
   (->> data-map
        (map (fn [[k v]]
               (when-let [field-schema (get @field-map-atom k)]
-                (when-let [schema-failure (s/check field-schema v)]
-                  (log/error (str "exception data of invalid type for field '" k "': " (pr-str schema-failure)))
-                  (when *throw-on-schema-failure*
-                    (throw (ex-info "schema failure on exception data" {:key k
-                                                                        :value v
-                                                                        :schema-failure schema-failure})))))))
+                (when-not (malli/validate field-schema v)
+                  (let [schema-failure (malli/explain field-schema v)]
+                    (log/error (str "exception data of invalid type for field '" k "': "
+                                    (pr-str schema-failure)))
+                    (when *throw-on-schema-failure*
+                      (throw (ex-info "schema failure on exception data" {:key k
+                                                                          :value v
+                                                                          :schema-failure schema-failure}))))))))
        dorun))
 
 (defn extract-system-name-from-err-id [err-id]

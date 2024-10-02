@@ -3,8 +3,7 @@
 
 (ns format-errors.test-format-errors
   (:require [clojure.test :refer :all]
-            [format-errors.format-errors :as format-errors]
-            [schema.core :as s]))
+            [format-errors.format-errors :as format-errors]))
 
 (set! *warn-on-reflection* true)
 
@@ -12,7 +11,7 @@
   (is (= (str (apply str (repeat 2045 \a)) "...")
          (#'format-errors/truncate-msg (apply str (repeat 2096 \a))))))
 
-(format-errors/merge-field-map {:type s/Symbol})
+(format-errors/merge-field-map {:type symbol?})
 
 (deftest test-analyze-runtime-usage
   (binding [*ns* (the-ns 'format-errors.test-format-errors)]
