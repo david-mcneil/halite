@@ -4,8 +4,8 @@
 (ns format-errors.format-errors
   (:require [clojure.pprint :as pprint]
             [clojure.string :as string]
-            [clojure.tools.logging :as log]
-            [schema.core :as s])
+            [schema.core :as s]
+            [taoensso.timbre :as log])
   (:import [clojure.lang Namespace]
            [java.io Writer]
            [java.lang StackTraceElement]))

@@ -4,8 +4,7 @@
 (ns format-errors.test-format-errors
   (:require [clojure.test :refer :all]
             [format-errors.format-errors :as format-errors]
-            [schema.core :as s]
-            [clojure.tools.logging :as log]))
+            [schema.core :as s]))
 
 (set! *warn-on-reflection* true)
 
@@ -59,10 +58,8 @@
              (format-errors/assemble-err-messages))))))
 
 (deftest test-check-data
-  (with-redefs [log/log* (fn [logger level t message]
-                           (is (re-find #"invalid type for field ':type'" message)))]
-    (is (thrown-with-msg? Exception #"schema failure on exception data"
-                          (binding [format-errors/*throw-on-schema-failure* true]
-                            (format-errors/throw-err {:type "bad type data"}))))))
+  (is (thrown-with-msg? Exception #"schema failure on exception data"
+                        (binding [format-errors/*throw-on-schema-failure* true]
+                          (format-errors/throw-err {:type "bad type data"})))))
 
 ;; (run-tests)
